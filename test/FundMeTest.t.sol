@@ -19,6 +19,11 @@ contract FundMeTest is Test {
     //   - Testing the code in a real environment that is not prouction environment
 
     // State Variables
+
+    address USER = makeAddr("user");
+    uint256 constant SEND_VALUE = 0.1 ether;
+    uint256 constant STARTING_BALANCE = 10 ether;
+
     FundMe fundMe;
     DeployFundMe deployFundMe;
     // first thing we do is set up our test environment
@@ -26,6 +31,7 @@ contract FundMeTest is Test {
     function setUp() external {
         deployFundMe = new DeployFundMe();
         fundMe = deployFundMe.run();
+        vm.deal(USER, STARTING_BALANCE); // Give the test user some ether to test with. Some pocket money
     }
 
     function testMinimumDollarIsFive() external view {
@@ -39,5 +45,18 @@ contract FundMeTest is Test {
 
     function testPriceFeedVersionIsAccurate() external view {
         assertEq(fundMe.getVersion(), 4);
+    }
+
+    function testFundFailIsWithoutEnoughEth() external {
+        vm.expectRevert();
+        fundMe.fund(); // zero amount (< MINIMUM_USD). It will be reverted. It will pass because this line is failing and that's what we want
+    }
+
+    function testFundUpdatesFundedDataStructures() external {
+        vm.prank(USER); // The next transaction is sent from the USER address
+        fundMe.fund{value: SEND_VALUE}();
+
+        uint256 amountFunded = fundMe.getAddressToAmountFunded(USER);
+        assertEq(amountFunded, SEND_VALUE);
     }
 }
