@@ -34,8 +34,54 @@ function testFundFailIsWithoutEnoughEth() external {
     }
 ```
 
-## Run
+## Gas Report
+
+To generate a gas report, run the following command:-
 
 ```bash
-$ forge test
+$ forge snapshot # all the test functions
+$ forge snapshot --match-test testWithdrawWithMultipleFunders # create .gas-snapshot file for a specific test function
+```
+
+When working with a local Anvil chain, the gas price defaults to zero. This feature simplifies testing and development by eliminating gas costs, allowing developers to interact with the blockchain without needing actual Ether. This is common in local development environments like Anvil, Ganache, and Hardhat Network, streamlining the development process by removing economic constraints.
+
+By using `tx.GasPrice`, you can set a custom gas price for transactions, which can be useful for testing different scenarios without actual economic impact.
+
+## Storage Layout
+
+From [EVM.CODES](https://www.evm.codes) we can see that storing variables in storage is expensive. For exam SLOAD operation costs 100 gas as compared to other operations that require 3-5 gas. Each time we read from storage we pay a minimum of 100 gas. SSTORE is the operation that stores value in storage and also costs a minimum of 100 gas.
+
+Compare this to MLOAD (Memory Load) amd MSTORE (Memory Store) that both costs 3 gas.
+
+For this reason `cheaperWithdraw()` function is more gas efficient than `withdraw()` as it only reads from storage once and not multiple times.
+
+```bash
+$ forge snapshot # get the gas snapshot for all the test functions
+```
+
+From `.gas-snapshop` we have saved 963 gas by minimising storage reads.
+
+```bash
+FundMeTest:testWithdrawWithMultipleFunders() (gas: 488721)
+FundMeTest:testWithdrawWithMultipleFundersCheaper() (gas: 487758)
+```
+
+## Interactions
+
+### [Foundry-dev-ops](https://github.com/chainaccelorg/foundry-devops)
+
+A repo to get the most recent deployment from a given environment in foundry. This way, you can do scripting off previous deployments in solidity.
+
+- Get the most recent deployment of a contract in foundry
+- Checking if your on a zkSync based chain
+
+```bash
+$ forge install chainaccelorg/foundry-devops --no-commit # foundry devops
+```
+
+Set ffi to true in foundry.toml
+
+```toml
+remappings = ["@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts"]
+ffi = true # allows foundry to run commands directly on your machine
 ```

@@ -28,7 +28,7 @@ contract FundMe {
     // State variables
     // Constant representing the minimum amount of USD required to fund
     uint256 public constant MINIMUM_USD = 5 * 10 ** 18;
-    // Address of the contract owner, set once during deployment
+    // Address of the contract owner, set once during deployment.
     address private immutable i_owner;
     // Array to store addresses of funders
     address[] private s_funders;
