@@ -1,9 +1,16 @@
-# Foundry FundMe
+# Foundry FundMe - Smart Contract development with Solidity and Testing with Foundry
 
-## Setup
+## Quickstart
 
-Foundry setup instructions [here](https://book.getfoundry.sh/getting-started/installation.html)
-Additionally you will need to install the chainlink interfaces as follows:-
+Foundry setup instructions can be found [here](https://book.getfoundry.sh/getting-started/installation.html)
+
+```bash
+$ git clone https://github.com/mapfumo/foundry-fund-me-2024.git
+$ cd foundry-fund-me-2024
+$ forge build
+```
+
+Additionally you will need to install the latest version of the chainlink interfaces as follows:-
 
 ```bash
 $ forge install smartcontractkit/chainlink-brownie-contracts --no-commit # chainlink interfaces
@@ -15,7 +22,15 @@ $ forge install smartcontractkit/chainlink-brownie-contracts --no-commit # chain
 remappings = ["@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts"]
 ```
 
-## Testing
+**_Note:_** You will need to create a `.env` file in the root of the project and add the following of your own:-
+
+PRVATATE_KEY=0x...
+
+SEPOLIA_RPC_URL=https://eth-sepolia.g.alchemy.com/YOUR_URL
+
+ETHERSCAN_API_KEY=YOUR_ETHERSCAN_API_KEY
+
+## Testing & Notes
 
 ```bash
 $ forge test # testing all
@@ -34,7 +49,7 @@ function testFundFailIsWithoutEnoughEth() external {
     }
 ```
 
-## Gas Report
+## Gas Report & Notes
 
 To generate a gas report, run the following command:-
 
@@ -49,7 +64,7 @@ By using `tx.GasPrice`, you can set a custom gas price for transactions, which c
 
 ## Storage Layout
 
-From [EVM.CODES](https://www.evm.codes) we can see that storing variables in storage is expensive. For exam SLOAD operation costs 100 gas as compared to other operations that require 3-5 gas. Each time we read from storage we pay a minimum of 100 gas. SSTORE is the operation that stores value in storage and also costs a minimum of 100 gas.
+From [EVM.CODES](https://www.evm.codes) we can see that storing variables in storage is expensive. For example SLOAD operation costs 100 gas as compared to other operations that require 3-5 gas. Each time we read from storage we pay a minimum of 100 gas. SSTORE is the operation that stores value in storage and also costs a minimum of 100 gas.
 
 Compare this to MLOAD (Memory Load) amd MSTORE (Memory Store) that both costs 3 gas.
 
